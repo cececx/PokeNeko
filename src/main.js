@@ -35,15 +35,15 @@ class Animation {
     // Playing control.
     this._timer = null;
     this._index = 0;
-    this._len = config.timestamps.reduce(function(a, b) { return a + b; }, 0);
+    this._len = config.timestamps.reduce(function(a, b) { return [0, a[1] + b[1]];}, [0,0])[1];
     this._keyFrames = [];
     this._audioFrames = Array(this._len).fill('');
 
     // Setup frames.
     for (var i = 0; i < config.timestamps.length; i++) {
-      var size = config.timestamps[i];
+      var size = config.timestamps[i][1];
       for (var j = 0; j < size; j++) {
-        this._keyFrames.push(i);
+        this._keyFrames.push(config.timestamps[i][0]);
       }
     }
     if (config.audio) {
@@ -52,6 +52,7 @@ class Animation {
         this._audioFrames[audio.frame] = audio.source;
       }
     }
+    console.log(this._keyFrames);
   }
 
   play() {
@@ -154,6 +155,7 @@ class AudioClip {
   play() {
     this._startTime = TIME;
     // TODO(miao): handle audio play. 
+    // https://www.html5rocks.com/en/tutorials/webaudio/intro/
   }
   stop() {
     // TODO(miao): handle audio stop.
@@ -285,7 +287,7 @@ var threadManager = (function(){
 threadManager.register(animator);
 threadManager.register(audioManager);
 
-var CANVAS, CONTEXT, TIME, POS_X=100, POS_Y=200;
+var CANVAS, CONTEXT, TIME, POS_X=250, POS_Y=500;
 var lastTime;
 var fps = 24.0;
 var deltaTime = 1000.0/fps;
